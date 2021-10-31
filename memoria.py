@@ -1,26 +1,3 @@
-"""
-
-  ____          _____               _ _           _       
- |  _ \        |  __ \             (_) |         | |      
- | |_) |_   _  | |__) |_ _ _ __ _____| |__  _   _| |_ ___ 
- |  _ <| | | | |  ___/ _` | '__|_  / | '_ \| | | | __/ _ \
- | |_) | |_| | | |  | (_| | |   / /| | |_) | |_| | ||  __/
- |____/ \__, | |_|   \__,_|_|  /___|_|_.__/ \__, |\__\___|
-         __/ |                               __/ |        
-        |___/                               |___/         
-    
-____________________________________
-/ Si necesitas ayuda, contáctame en \
-\ https://parzibyte.me               /
- ------------------------------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-Creado por Parzibyte (https://parzibyte.me). Este encabezado debe mantenerse intacto,
-excepto si este es un proyecto de un estudiante.
-"""
 import pygame
 import sys
 import math
@@ -39,10 +16,11 @@ Variables y configuraciones que vamos a usar a lo largo del programa
 """
 
 altura_boton = 30  # El botón de abajo, para iniciar juego
-medida_cuadro = 200  # Medida de la imagen en pixeles
+medida_cuadro = 100  # Medida de la imagen en pixeles
 # La parte trasera de cada tarjeta
 nombre_imagen_oculta = "assets/oculta.png"
 imagen_oculta = pygame.image.load(nombre_imagen_oculta)
+imagen_oculta = pygame.transform.scale(imagen_oculta, (medida_cuadro, medida_cuadro))
 segundos_mostrar_pieza = 2  # Segundos para ocultar la pieza si no es la correcta
 """
 Una clase que representa el cuadro. El mismo tiene una imagen y puede estar
@@ -53,7 +31,7 @@ También tiene una fuente o nombre de imagen que servirá para compararlo más t
 
 
 class Cuadro:
-    def __init__(self, fuente_imagen):
+    def __init__(self, par, imagen):
         self.mostrar = True
         self.descubierto = False
         """
@@ -61,22 +39,23 @@ class Cuadro:
         la imagen lista para ser pintada por PyGame
         La fuente la necesitamos para más tarde, comparar las tarjetas
         """
-        self.fuente_imagen = fuente_imagen
-        self.imagen_real = pygame.image.load(fuente_imagen)
+        self.par = par
+        self.imagen_real = pygame.image.load(imagen)
+        self.imagen_real = pygame.transform.scale(self.imagen_real, (medida_cuadro, medida_cuadro))
 
 
 """
 Todo el juego; que al final es un arreglo de objetos
 """
 cuadros = [
-    [Cuadro("assets/coco.png"), Cuadro("assets/coco.png"),
-     Cuadro("assets/manzana.png"), Cuadro("assets/manzana.png")],
-    [Cuadro("assets/limón.png"), Cuadro("assets/limón.png"),
-     Cuadro("assets/naranja.png"), Cuadro("assets/naranja.png")],
-    [Cuadro("assets/pera.png"), Cuadro("assets/pera.png"),
-     Cuadro("assets/piña.png"), Cuadro("assets/piña.png")],
-    [Cuadro("assets/plátano.png"), Cuadro("assets/plátano.png"),
-     Cuadro("assets/sandía.png"), Cuadro("assets/sandía.png")],
+    [Cuadro("bird", "assets/animals/bird.png"), Cuadro("bird","assets/animals/bird_name.png"),
+     Cuadro("cat","assets/animals/cat.png"), Cuadro("cat","assets/animals/cat_name.png")],
+    [Cuadro("chicken","assets/animals/chicken.png"), Cuadro("chicken","assets/animals/chicken_name.png"),
+     Cuadro("cow","assets/animals/cow.png"), Cuadro("cow","assets/animals/cow_name.png")],
+    [Cuadro("dog","assets/animals/dog.png"), Cuadro("dog","assets/animals/dog_name.png"),
+     Cuadro("horse","assets/animals/horse.png"), Cuadro("horse","assets/animals/horse_name.png")],
+    [Cuadro("pig","assets/animals/pig.png"), Cuadro("pig","assets/animals/pig_name.png"),
+     Cuadro("rabbit","assets/animals/rabbit.png"), Cuadro("rabbit","assets/animals/rabbit_name.png")],
 ]
 
 # Colores
@@ -94,7 +73,7 @@ sonido_voltear = pygame.mixer.Sound("assets/voltear.wav")
 
 # Calculamos el tamaño de la pantalla en base al tamaño de los cuadrados
 anchura_pantalla = len(cuadros[0]) * medida_cuadro
-altura_pantalla = (len(cuadros) * medida_cuadro) + altura_boton
+altura_pantalla = (len(cuadros[0]) * medida_cuadro) + altura_boton
 anchura_boton = anchura_pantalla
 
 # La fuente que estará sobre el botón
@@ -182,7 +161,7 @@ Iniciamos la pantalla con las medidas previamente calculadas, colocamos título 
 reproducimos el sonido de fondo
 """
 pantalla_juego = pygame.display.set_mode((anchura_pantalla, altura_pantalla))
-pygame.display.set_caption('Memorama en Python - By Parzibyte')
+pygame.display.set_caption('Memorama en Python')
 pygame.mixer.Sound.play(sonido_fondo, -1)  # El -1 indica un loop infinito
 # Ciclo infinito...
 while True:
@@ -242,7 +221,7 @@ while True:
                     cuadro1 = cuadros[y1][x1]
                     cuadro2 = cuadros[y2][x2]
                     # Si coinciden, entonces a ambas las ponemos en descubiertas:
-                    if cuadro1.fuente_imagen == cuadro2.fuente_imagen:
+                    if cuadro1.par == cuadro2.par:
                         cuadros[y1][x1].descubierto = True
                         cuadros[y2][x2].descubierto = True
                         x1 = None
